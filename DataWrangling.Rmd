@@ -1,0 +1,351 @@
+---
+title: "Data Wrangling and Visualisation"
+author: "DataTeka: Tatjana Kecojevic"
+date: "13/02/2018"
+logo : DThexagon.png
+biglogo : DThexagon.png
+#output: slidy_presentation
+#output: html_document
+#output: beamer_presentation
+output: ioslides_presentation
+#meta_img: /images/image.jpg
+---
+
+```{r, echo = FALSE, warnings=FALSE, message=FALSE}
+r <- getOption("repos")
+r["CRAN"] <- "http://cran.cnr.berkeley.edu/"
+options(repos = r)
+```
+
+## Before there was R, there was S!
+
+**R** is a dialect of **S** language that was developed in 1976 by *Rick Becker* and *John Chambers* at the  Bell Laboratories.
+
+*Rick Becker* gave an excellent keynote talk *"Forty Years of S"* at UseR!2016 conference:   
+[Rick Becker @ UseR!2016](http://blog.revolutionanalytics.com/2016/07/rick-becker-s-talk.html) where he talked about development of **S** language that gives explanations for many characteristics of **R** as we know it, including "<-" assignment operator.
+
+1993 Bell Labs gave StatSci (later Insightful Corp.) an exclusive license to develop and sell the **S** language. Insightful sold its implementation of the **S** language under the product name **S-PLUS**.
+
+You can read more about the [history of S, R, and S-PLUS](https://www.whoishostingthis.com/resources/s-plus/)
+
+## then, R was born
+In early nineties at the University of Aucklandn in the Department of Statistics **R** was created by *Ross Ihaka* and *Robert Gentleman*.
+
+They used [GNU General Public License](http://www.gnu.org/licenses/gpl-2.0.html) to make R open source free software. 
+
+**R**oss Ihaka and **R**obert Gentleman. *R: A language for data analysis and graphics.* Journal of Computational and Graphical Statistics, 5(3):299–314, 1996
+
+Currently **R** is developed by the **R Development Core Team**, of which *John Chambers* is a member.
+
+## Write R Code
+
+To start using **R** you need to:
+
+1) Install [R](https://cran.r-project.org/) [(and RStudio)](https://www.rstudio.com/products/rstudio/download/#download)
+
+2) Launch it and set your working directory: letting R know where to find all of your files.
+
+3) Start writing **R** code!
+ 
+**Tip**:
+When start working on a new R code/R Project in [RStudio IDE](https://support.rstudio.com/hc/en-us/sections/200107586-Using-the-RStudio-IDE) use ```File -> New Project```. This way your working directory would be set up when you start a new project and it will save all your files in it. Next time you open your project it would set project's directory as a working directory... It would help you with so much [more](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).   
+
+
+## Before Tidyverse R, there is Base R!
+When you download and install **R** for the first time, you are installing **the Base R** software. **Base R** contains most of the functions you’ll use on a daily basis: ```mean()```, ```subset()```...
+
+To learn about **R**'s basic operations, data structures and base functions you could look at one of R-Ladies Manchester's handouts: [Introduction to base R](https://tanjakec.github.io/blog/introduction-to-r/).
+
+If you want to access data and code written by other people, you’ll need to install it as a **package**. An **R package** is a bundle of functions (code), data, documentation, vignettes (examples), stored in one neat place.
+
+"In **R**, the fundamental unit of shareable code is the package." [Hadley Wickham](http://r-pkgs.had.co.nz/intro.html)  
+
+## The verse!
+
+An opinionated collection of **R packages** for data science.
+
+[```install.packages("tidyverse")```](https://www.tidyverse.org/)
+
+[```library(tidyverse)```](https://www.tidyverse.org/packages/)
+
+- Have you tried learning data science by reading books? 
+
+[**R for Data Science**](http://r4ds.had.co.nz/) by Garrett Grolemund & Hadley Wickham
+
+- Have you tried learning data science by posting your questions and discussing it with other people within the R community?
+
+[RStudio Community](https://community.rstudio.com/)
+
+
+## The ```dplyr``` Package: 
+provides a “grammar” (the verbs) for data manipulation and for operating on data frames. The **key opertor and the esential verbs** are :
+
+- ```%>%```: **the “pipe” operator** used to connect multiple verb actions together into a pipeline.
+- ```select()```: return a subset of the columns of a data frame.
+- ```mutate()```: add new variables/columns or transform existing variables.
+- ```filter()```: extract a subset of rows from a data frame based on logical conditions.
+- ```arrange()```: reorder rows of a data frame according to single or multiple variables.
+- ```summarise()``` / ```summarize()```: reduces each group to a single row by calculating aggregate measures. 
+
+
+## Chicago Data
+
+**Description:** Chicago daily air pollution and death rate data.
+A data frame with 7 columns and 5114 rows. Each row refers to one day. The columns are:
+
+• ```death``` total deaths (per day).
+
+• ```pm10median``` median particles in 2.5-10 per cubic m
+
+• ```pm25median``` medianparticles < 2.5 mg per cubic m (more dangerous).
+
+• ```o3median``` Ozone in parts per billion
+
+• ```so2median``` Median Sulpher dioxide measurement
+
+• ```time``` time in days
+
+• ```tmpd``` temperature in fahrenheit
+
+
+## 1st look at the data: ```dim()``` & ```head()```
+
+```{r, warnings=FALSE, message=FALSE}
+# install.packages("gamair")
+library(gamair)
+data(chicago)
+dim(chicago)
+head(chicago)
+```
+
+## Examine the structure of the data: ```str()```
+```{r}
+str(chicago) 
+```
+The output could look messy  and it might not fit the screen if you're dealing with a big data set that has lots of variables!
+
+## Do it in a tidy way: ```glimpse()```
+
+```{r, warnings=FALSE, message=FALSE}
+suppressPackageStartupMessages(library(dplyr))
+glimpse(chicago) 
+```
+
+## The pipeline operater: ```%>%```
+
+**Left Hand Side (LHS)**\ \ \  ```%>%``` \ \ \ **Right Hand Side (RHS)**
+
+```x %>% f(..., y)``` \
+\ \ \ \ \ \ \ \ ```f(x,y)```
+
+The "pipe" passes the **result** of the **LHS** as the 1st operator argument of the **function** on the **RHS**
+
+```3 %>% sum(4)``` \ \ \ \ <==>\ \ \ \  ``` sum(3, 4)```
+
+```%>%```\ \  is very practical for chaining together multiple ```dplyr``` functions in a sequence of operations.
+
+##```select()``` 
+
+- ```starts_with("X")``` every name that starts with "X".
+- ```ends_with("X")``` every name that ends with "X".
+- ```contains("X")``` every name that contains "X".
+- ```matches("X")``` every name that matches "X", where "X" can be a regular expression.
+- ```num_range("x", 1:5)```  the variables named x01, x02, x03, x04, x05.
+- ```one_of(x)``` => every name that appears in x, which should be a character vector.
+```{r, echo = FALSE}
+head(chicago, n = 2) 
+```
+
+##Select your variables
+
+```{r, echo = TRUE}
+chicago_air_measurements <- select(chicago, ends_with("median"))
+head(chicago_air_measurements, n = 1)
+chicago_air_pm <- chicago[c("pm10median", "pm25median")]
+head(chicago_air_pm, n = 1)
+chicago_air_pm2 <- select(chicago, starts_with("pm"))
+head(chicago_air_pm2, n = 1)
+```
+
+##```mutate()```
+For example, it would allow you to add to the data frame ```df``` a new column, ```z```, which is the multiplication of the columns ```x``` and ```y```: 
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ```mutate(df, z = x * y)```
+
+Let us convert °F into °C:\ \ \ \  T(°C) = (T(°F) - 32) × 5/9
+
+```{r, echo = TRUE}
+chicago2 <- mutate(chicago, tmpdc = round((tmpd - 32) / 1.8, digits = 1)) 
+head(chicago2, n = 3)
+```
+
+##```filter()```
+There is a set of logical operators in **R** that you can use inside ```filter()```:
+
+- ```x < y```: TRUE if ```x``` is less than ```y```
+- ```x <= y```: TRUE if ```x``` is less than or equal to ```y```
+- ```x == y```: TRUE if ```x``` equals ```y```
+- ```x != y```: TRUE if ```x``` does not equal ```y```
+- ```x >= y```: TRUE if ```x``` is greater than or equal to ```y```
+- ```x > y```: TRUE if ```x``` is greater than ```y```
+- ```x %in% c(a, b, c)```: TRUE if ```x``` is in the vector ```c(a, b, c)```
+
+##Filter your data
+
+```{r, echo = TRUE}
+high_death <- filter(chicago2, death > 200) 
+high_death
+high_temp_death <- filter(chicago2, death > 200 & tmpdc >= 30)
+high_temp_death
+```
+
+##```arrange()```
+is used to reorder rows of a **d**ata **f**rame (df) according to one of the variables/columns.
+
+- If you pass ```arrange()``` a character variable, **R** will rearrange the rows in alphabetical order according to values of the variable. 
+- If you pass a factor variable, **R** will rearrange the rows according to the order of the levels in your factor (running ```levels()``` on the variable reveals this order).
+
+
+## Arranging your data
+```{r, echo = TRUE}
+low_2_high <- arrange(chicago, death)
+head(low_2_high, n = 4)
+high_2_low <- arrange(chicago, desc(death))
+head(high_2_low, n = 4)
+```
+
+##```summarise()```
+
+- uses the same syntax as ```mutate()```, but the resulting dataset consists of a single row instead of an entire new column in the case of ```mutate()```. 
+
+- builds a new dataset that contains only the summarising statistics.
+
+Let us use ```summarise()``` to print out a summary of chicago data containing two variables: max_detht and the max_tmpd
+```{r, echo = TRUE}
+summarise(chicago, max_deth = max(death), max_tmpd = max(tmpd))
+```
+
+##```%>%``` all up!
+
+
+```{r, echo = TRUE}
+chicago_pipe <- chicago %>%
+  filter(!is.na(pm10median) & !is.na(so2median)) %>%
+  mutate(tmpdC = round((tmpd - 32) / 1.8, digits = 1))
+plot(chicago_pipe$tmpdC, chicago_pipe$death, cex = 0.5, col = "red")
+```
+
+## grammer of graphics
+Enables you to specify building blocks of a plot and to combine them to create graphical display you want. There are 8 building blocks:
+
+- data
+- aesthetic mapping
+- geometric object
+- statistical transformations
+- scales
+- coordinate system
+- position adjustments
+- faceting
+
+## ```ggplot()```
+```{r, echo = TRUE}
+library(ggplot2)
+ggplot(chicago_pipe, aes(x = tmpdC, y = death)) +
+  geom_point(col ="red")
+```
+
+## adding layers to your ```ggplot()```
+
+```{r, echo = TRUE, eval = FALSE}
+ggplot(chicago_pipe, aes(x = tmpdC, y = death, col = "red")) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(col = "blue") +
+  labs (title= " death vs temperature ", 
+        x = "°C", y = "death") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(fill = NA, 
+                                    colour = "black",
+                                    size = .75),
+        plot.title=element_text(hjust=0.5))
+```
+
+
+## Voila
+```{r, echo = FALSE, warnings=FALSE, message=FALSE}
+ggplot(chicago_pipe, aes(x = tmpdC, y = death, col = "red")) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(col = "blue") +
+  labs (title= " death vs temperature ", 
+        x = "°C", y = "death") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(fill = NA, 
+                                    colour = "black",
+                                    size = .75),
+        plot.title=element_text(hjust=0.5))
+```
+
+## useful links: 
+
+cheatsheets:
+
+- [data-wrangling-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+- [ggplot2-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+websites:
+
+- [tidyverse, visualization, and manipulation basics](https://www.rstudio.com/resources/webinars/tidyverse-visualization-and-manipulation-basics/)
+
+- [ggplot part of tidy verse](http://ggplot2.tidyverse.org/index.html)
+
+- [Introduction to R graphics with ggplot2](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html#introduction)
+
+## Your turn!
+
+1) upload Daily Mortality Weather and Pollution Data for Chicago: **```chicagoNMMAPS```** available from **```dlnm```** package.
+2) have a glance at the data.
+3) what are the questions you could ask; could you provide the answers to them?
+
+**There is a chalange:**
+
+```dplyr```'s ```group_by()``` function enables you to group your data. It allows you to create a separate df that splits the original df by a variable.
+
+Knowing about ```group_by()``` function, coud you compute the average pollutant level by month and visualise your result?
+
+## Possible Solution: code
+```{r, echo = TRUE, eval = FALSE}
+# install and open `dlnm' package and access the data
+install.packages("dlnm")
+library(dlnm)
+data("chicagoNMMAPS")
+
+# group data by month and calculate average monthly polution
+my_ch <- chicagoNMMAPS %>%
+  group_by(month) %>%
+  summarise(pm10 = mean(pm10, na.rm = TRUE))
+
+# visualise the information
+ggplot(my_ch, aes(x=month, y = pm10)) +
+  geom_line() + geom_point(col = "red") +
+  xlab("Month") + ylab("average pm10") +
+  scale_x_continuous(breaks = seq(1, 12, 1), labels = seq(1, 12, 1))
+```
+
+## Avoid Chicago in spring and summer!
+```{r, echo = FALSE, warnings=FALSE, message=FALSE}
+# install and open `dlnm' package and access the data
+# install.packages("dlnm")
+library(dlnm)
+data("chicagoNMMAPS")
+
+# group data by month and calculate average monthly polution
+my_ch <- chicagoNMMAPS %>%
+  group_by(month) %>%
+  summarise(pm10 = mean(pm10, na.rm = TRUE))
+
+# visualise the information
+ggplot(my_ch, aes(x=month, y = pm10)) +
+  geom_line() + geom_point(col = "red") +
+  xlab("Month") + ylab("average pm10") +
+  scale_x_continuous(breaks = seq(1, 12, 1), labels = seq(1, 12, 1))
+```
