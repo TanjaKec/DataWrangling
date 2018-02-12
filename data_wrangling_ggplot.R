@@ -1,4 +1,4 @@
-# Start writing **R** code!
+# Start writing **R** code
 # To learn about **R**'s basic operations, data structures and 
 # base functions you could look at 'Introduction to base R' 
 # https://tanjakec.github.io/blog/introduction-to-r/.
