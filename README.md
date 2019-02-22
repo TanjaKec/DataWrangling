@@ -1,2 +1,3 @@
 # DataWrangling
-a brief introduction to the tools for data manipulation and visualisation: dplyr and ggplot2
+
+A workshop on exploratory data analysis: [tidy](https://tidyr.tidyverse.org/) way, where you are be introduced to the tools for data manipulation and visualisation like [dplyr](https://dplyr.tidyverse.org/) and [ggplot2](https://ggplot2.tidyverse.org/).
